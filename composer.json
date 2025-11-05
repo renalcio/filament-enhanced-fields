@@ -1,0 +1,67 @@
+{
+    "name": "renalcio/filament-enhanced-fields",
+    "description": "Filament Fields Enhancement Pack",
+    "keywords": [
+        "renalcio",
+        "laravel",
+        "filament-enhanced-fields"
+    ],
+    "homepage": "https://github.com/renalcio/filament-enhanced-fields",
+    "support": {
+        "issues": "https://github.com/renalcio/filament-enhanced-fields/issues",
+        "source": "https://github.com/renalcio/filament-enhanced-fields"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Renalcio Jr."
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "filament/filament": "^4.0",
+        "jantinnerezo/livewire-alert": "*",
+        "spatie/laravel-package-tools": "^1.19.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0",
+        "pestphp/pest": "^2.1",
+        "pestphp/pest-plugin-laravel": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Renalcio\\FilamentEnhancedFields\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Renalcio\\FilamentEnhancedFields\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Renalcio\\FilamentEnhancedFields\\FilamentEnhancedFieldsServiceProvider"
+            ],
+            "aliases": {
+                "FilamentEnhancedFields": "Renalcio\\FilamentEnhancedFields\\Facades\\FilamentEnhancedFields"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

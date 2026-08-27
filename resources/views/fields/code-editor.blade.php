@@ -1,8 +1,8 @@
-<x-filament-forms::field-wrapper 
-    :id="$getId()" 
-    :label="$getLabel()" 
-    :label-sr-only="$isLabelHidden()"    
-    :required="$isRequired()" 
+<x-filament-forms::field-wrapper
+    :id="$getId()"
+    :label="$getLabel()"
+    :label-sr-only="$isLabelHidden()"
+    :required="$isRequired()"
     :state-path="$getStatePath()"
     >
 
@@ -16,14 +16,14 @@
             </div>
         </div>
 
-        <div style="overflow: auto;" 
-            @theme-changed.window="function(e) {toggleTheme(e.detail)}" 
+        <div style="overflow: auto;"
+            @theme-changed.window="function(e) {toggleTheme(e.detail)}"
             x-data="codeEditorFormComponent(
             $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             '{{ $getIsReadOnly() }}',
             '{{ $getDarkModeTheme() }}',
             '{{ $getLightModeTheme() }}',
-        
+
         )">
             <div wire:ignore class="w-full code-editor-textarea-wrapper" x-ref="codeEditor"
                 style="height:{{ $getMinHeight() }}px;overflow: hidden; {{ $getCustomStyle() }}">

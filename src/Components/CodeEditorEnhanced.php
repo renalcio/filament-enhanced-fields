@@ -11,16 +11,17 @@ use Renalcio\FilamentEnhancedFields\Enums\CodeLanguage;
 
 class CodeEditorEnhanced extends Field
 {
-
     use HasExtraAlpineAttributes;
 
     protected string $view = 'filament-enhanced-fields::components.code-editor';
 
-    protected int|string|Closure|null $minHeight   = '10rem';
-    protected int|string|Closure|null $maxHeight   = '50vh';
-    protected string|null             $customStyle = null;
-    protected bool                    $isReadOnly  = false;
+    protected int|string|Closure|null $minHeight = '10rem';
 
+    protected int|string|Closure|null $maxHeight = '50vh';
+
+    protected ?string $customStyle = null;
+
+    protected bool $isReadOnly = false;
 
     protected CodeLanguage|Closure|array|null $languages = null;
 
@@ -32,8 +33,8 @@ class CodeEditorEnhanced extends Field
         $maxHeight = $this->getMaxHeight();
 
         $this->extraAttributes([
-                                   'style' => "min-height: {$minHeight}; max-height: {$maxHeight}; overflow-y: auto;",
-                               ]);
+            'style' => "min-height: {$minHeight}; max-height: {$maxHeight}; overflow-y: auto;",
+        ]);
     }
 
     public function languages(CodeLanguage|Closure|array|null $language): static
@@ -54,7 +55,7 @@ class CodeEditorEnhanced extends Field
         return $languages;
     }
 
-    public function CustomStyle(string|null $customStyle): static
+    public function CustomStyle(?string $customStyle): static
     {
         $this->customStyle = $customStyle;
 
@@ -96,7 +97,7 @@ class CodeEditorEnhanced extends Field
 
     public function getShowCopyButton(): string
     {
-        return $this->evaluate($this->showCopyButton ? "true" : "false");
+        return $this->evaluate($this->showCopyButton ? 'true' : 'false');
     }
 
     public function getMinHeight(): null|int|string

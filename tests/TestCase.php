@@ -27,7 +27,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn(string $modelName) => 'Dotswan\\FilamentCodeEditor\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Dotswan\\FilamentCodeEditor\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

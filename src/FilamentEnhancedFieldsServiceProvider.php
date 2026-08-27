@@ -22,12 +22,12 @@ class FilamentEnhancedFieldsServiceProvider extends PackageServiceProvider
     {
 
         $package->name(static::$name)
-                ->hasCommands($this->getCommands())
-                ->hasInstallCommand(function (InstallCommand $command): void {
-                    $command
-                        ->publishConfigFile()
-                        ->askToStarRepoOnGitHub('renalcio/filament-enhanced-fields');
-                });
+            ->hasCommands($this->getCommands())
+            ->hasInstallCommand(function (InstallCommand $command): void {
+                $command
+                    ->publishConfigFile()
+                    ->askToStarRepoOnGitHub('renalcio/filament-enhanced-fields');
+            });
 
         $configFileName = $package->shortName();
 
@@ -67,9 +67,9 @@ class FilamentEnhancedFieldsServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            AlpineComponent::make('filament-enhanced-code-editor', __DIR__ . '/../resources/dist/js/code-editor-enhanced.js'),
-            Css::make('filament-enhanced-fields', __DIR__ . '/../resources/dist/css/filament-enhanced-fields.css'),
-            //Js::make('filament-enhanced-fields', __DIR__ . '/../resources/dist/js/filament-enhanced-fields.js'),
+            AlpineComponent::make('filament-enhanced-code-editor', __DIR__.'/../resources/dist/js/code-editor-enhanced.js'),
+            Css::make('filament-enhanced-fields', __DIR__.'/../resources/dist/css/filament-enhanced-fields.css'),
+            // Js::make('filament-enhanced-fields', __DIR__ . '/../resources/dist/js/filament-enhanced-fields.js'),
         ];
     }
 

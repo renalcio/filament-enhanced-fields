@@ -1,103 +1,113 @@
-# Filament Code Editor
+# Filament Enhanced Fields
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Software License][ico-license]][link-license]
 
+A small pack of enhanced form fields for [Filament](https://filamentphp.com). Currently ships a **CodeMirror 6** powered code editor field (`CodeEditorEnhanced`), built for editing real source files (not just a "pretty textarea") from inside a Filament panel.
 
-<img src="https://github.com/dotswan/filament-code-editor/assets/20874565/f814ec5f-5d73-4331-a669-25d50cfdc444" width="400" height="320">
+## Features
 
-<img src="https://github.com/dotswan/filament-code-editor/assets/20874565/df6608c9-2088-4d78-8a94-a814ba873c6b" width="400" height="320">
-
-## Introduction
-
-The Filament Code Editor package enhances Filament with a specialized field type, allowing seamless code editing powered by the CodeMirror JavaScript library within Filament components. This integration provides users with a dedicated environment for editing various code languages such as CSS, HTML, JavaScript, JSON, and PHP directly within Filament forms.
-
-* Key Features:
-  * Integration of the CodeMirror JavaScript library into Filament components.
-  * Support for multiple code languages including CSS, HTML, JavaScript, JSON, and PHP.
-  * Effortless editing of code within the familiar Filament interface.
+- **CodeMirror 6** under the hood — no CDN dependency, bundled with the package.
+- **Multi-language syntax highlighting**: CSS, Sass/SCSS, HTML, Twig, JavaScript, JSON, PHP, Python, Java, Go, C++, SQL, XML, YAML, Markdown.
+- **Twig-in-HTML** mixed-language mode, so `.twig`/`.html` templates get proper highlighting both in the markup and inside `{{ }}` / `{% %}` regions, including embedded `<script>`/`<style>` blocks.
+- **Emmet** abbreviation expansion (`Ctrl-E` to expand, `Ctrl-Shift-E` to enter abbreviation mode, `Ctrl-Shift-A` to wrap the selection).
+- **Comment toggling** (`Ctrl-/` and `Ctrl-Shift-/`, both main-row and numpad `/`), matched by physical key position so it works regardless of keyboard layout.
+- **Dark mode** that automatically follows Tailwind's `.dark` class on `<html>` — no extra wiring needed.
+- **Custom autocomplete**: feed the field a list of arbitrary suggestions (functions, symbols, identifiers — from your own app, a database, another file, whatever) and they show up in CodeMirror's completion popup alongside each language's native completions.
+- Supports Filament's standard `hintActions()`, `live()`, and other `Field` conveniences out of the box.
 
 ## Installation
 
-To integrate the Filament Code Editor package into your project, use Composer:
-
-
 ```bash
-composer require dotswan/filament-code-editor
+composer require renalcio/filament-enhanced-fields
 ```
-
-For **Filament v3**:
-```bash
-composer require dotswan/filament-code-editor:"^1.1.4"
-```
-
 
 ## Basic Usage
 
-To implement the code editor field within Filament forms, use the `CodeEditor` field type:
-
 ```php
-use Dotswan\FilamentCodeEditor\Fields\CodeEditor;
+use Renalcio\FilamentEnhancedFields\Components\CodeEditorEnhanced;
+use Renalcio\FilamentEnhancedFields\Enums\CodeLanguage;
 
-CodeEditor::make('codes')
-    // Additional configuration goes here, if needed
-    ->id('unique_field_id')
-    ->minHeight(768)
-    ->isReadOnly(true)
-    ->showCopyButton(true)
-    ->darkModeTheme('gruvbox-dark')
-    ->lightModeTheme('basic-light')
+CodeEditorEnhanced::make('content')
+    ->languages(CodeLanguage::Php)
+    ->minHeight('20rem')
+    ->maxHeight('60vh')
     ->columnSpanFull(),
 ```
 
-**Theme values:**
- - basic-light
- - basic-dark
- - solarized-dark
- - solarized-light
- - material-dark
- - nord
- - gruvbox-light
- - gruvbox-dark
+`languages()` also accepts an array, to load more than one language extension into the same editor instance (useful for templates that mix markup with embedded script/style):
 
-## Supported Languages
+```php
+CodeEditorEnhanced::make('content')
+    ->languages([CodeLanguage::Html, CodeLanguage::JavaScript, CodeLanguage::Css]),
+```
 
-The Filament Code Editor supports the following languages:
+### Supported languages
 
-* CSS
-* HTML
-* JavaScript
-* JSON
-* PHP
+`Renalcio\FilamentEnhancedFields\Enums\CodeLanguage` — `Cpp`, `Css`, `Sass`, `Go`, `Html`, `Twig`, `Java`, `JavaScript`, `Json`, `Markdown`, `Php`, `Python`, `Sql`, `Xml`, `Yaml`.
 
-Customize and manage code for these languages effortlessly within your Filament forms.
+### Custom autocomplete
+
+Pass a flat array (or a `Closure` returning one) of suggestions via `completions()`. Each item needs a `label` and a `type` (used for the icon/grouping in CodeMirror's completion list — e.g. `function`, `variable`, `class`, `filter`, `tag`, or any other short label):
+
+```php
+CodeEditorEnhanced::make('content')
+    ->languages(CodeLanguage::Twig)
+    ->completions(fn () => [
+        ['label' => 'dd', 'type' => 'function'],
+        ['label' => 'ProcessedRefund', 'type' => 'class'],
+        ['label' => 'App\\Models\\Order', 'type' => 'variable'],
+    ]),
+```
+
+These are merged with — not a replacement for — each language's own built-in completions (e.g. CSS property/value suggestions, HTML tag names). Build the list from whatever's relevant to your app: reflected functions/filters from a template engine, symbols scanned out of other project files, a static list, database-backed snippets, etc.
+
+### Live updating & save shortcut
+
+The field entangles its state two-way, so it plays well with `->live()` and with Filament `Action`s that read/write the field's value via `Get`/`Set` (e.g. a "Save" action bound to `Ctrl+Shift+S` via `->keyBindings([...])`) — external changes to the state are reflected back into the editor automatically.
+
+### Sizing
+
+```php
+CodeEditorEnhanced::make('content')
+    ->minHeight('10rem') // default
+    ->maxHeight('50vh'), // default
+```
+
+## Keyboard shortcuts
+
+| Shortcut | Action |
+|---|---|
+| `Tab` | Indent |
+| `Ctrl+E` | Expand Emmet abbreviation |
+| `Ctrl+Shift+E` | Enter Emmet abbreviation mode |
+| `Ctrl+Shift+A` | Wrap selection with abbreviation |
+| `Ctrl+/` or `Ctrl+Shift+/` | Toggle line/block comment |
 
 ## License
 
-This package is distributed under the [MIT License](link-to-your-license).
+This package is distributed under the [MIT License][link-license].
 
 ## Security
 
-Security is a priority for us. If you encounter any security-related issues or vulnerabilities, please report them via our [GitHub issue tracker][link-github-issue]. For direct communication, reach out to [tech@dotswan.com](mailto:tech@dotswan.com).
+If you encounter any security-related issues, please report them via the [GitHub issue tracker][link-github-issue].
 
 ## Contribution
 
-Contributions are welcome and valued. Enhancements, suggestions, and bug reports help improve this package for everyone. Here's how you can contribute:
+Contributions are welcome:
 
-1. Fork the Project
-2. Create a Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a pull request
 
-Thank you for considering contributing to the Filament Code Editor!
-
-[ico-version]: https://img.shields.io/packagist/v/dotswan/filament-code-editor.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/renalcio/filament-enhanced-fields.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/dotswan/filament-code-editor.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/renalcio/filament-enhanced-fields.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/dotswan/filament-code-editor
-[link-license]: https://github.com/dotswan/filament-code-editor/blob/master/LICENSE.md
-[link-downloads]: https://packagist.org/packages/dotswan/filament-code-editor
-[link-github-issue]: https://github.com/dotswan/filament-code-editor/issues
+[link-packagist]: https://packagist.org/packages/renalcio/filament-enhanced-fields
+[link-license]: https://github.com/renalcio/filament-enhanced-fields/blob/main/LICENSE.md
+[link-downloads]: https://packagist.org/packages/renalcio/filament-enhanced-fields
+[link-github-issue]: https://github.com/renalcio/filament-enhanced-fields/issues

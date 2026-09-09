@@ -1,4 +1,4 @@
-import {Compartment, EditorState} from '@codemirror/state'
+import {Compartment, EditorState, Prec} from '@codemirror/state'
 import {basicSetup, EditorView} from 'codemirror'
 import {indentWithTab} from '@codemirror/commands'
 import {oneDark} from '@codemirror/theme-one-dark'
@@ -96,11 +96,14 @@ export default function codeEditorEnhancedFormComponent({
                                     this.$wire.$commit()
                                 }
                             },
-                            // Ctrl+Shift+/ pra comentar/descomentar. Não dá pra usar o `keymap.of([{key: 'Ctrl-Shift-/'}])`
-                            // declarativo aqui: o CodeMirror casa pelo caractere PRODUZIDO (event.key), e em teclados
-                            // US/ABNT o Shift+/ produz "?" (não "/"), então esse binding nunca bateria de verdade.
-                            // Checando `event.code` (posição física da tecla) em vez do caractere, funciona independente
-                            // do layout de teclado — e aceita tanto a "/" principal quanto a do teclado numérico.
+                        }),
+                        // Ctrl+Shift+/ pra comentar/descomentar. Não dá pra usar o `keymap.of([{key: 'Ctrl-Shift-/'}])`
+                        // declarativo aqui: o CodeMirror casa pelo caractere PRODUZIDO (event.key), e em teclados
+                        // US/ABNT o Shift+/ produz "?" (não "/"), então esse binding nunca bateria de verdade.
+                        // Checando `event.code` (posição física da tecla) em vez do caractere, funciona independente
+                        // do layout de teclado — e aceita tanto a "/" principal quanto a do teclado numérico.
+                        // `Prec.highest` garante que roda antes de qualquer keymap interno do basicSetup.
+                        Prec.highest(EditorView.domEventHandlers({
                             keydown: (event, view) => {
                                 const isSlashKey = event.code === 'Slash' || event.code === 'NumpadDivide'
 
@@ -112,7 +115,7 @@ export default function codeEditorEnhancedFormComponent({
 
                                 return toggleComment(view)
                             },
-                        }),
+                        })),
                         ...(languageExtension ? languageExtension : []),
                         //twig(),
                         this.themeCompartment.of(this.getThemeExtensions()),

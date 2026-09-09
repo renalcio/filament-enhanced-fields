@@ -76,10 +76,6 @@ export default function codeEditorEnhancedFormComponent({
                             {
                                 key: 'Ctrl-/',
                                 run: toggleComment
-                            },
-                            {
-                                key: 'Ctrl-Shift-/',
-                                run: toggleComment
                             }]),
                         EditorView.lineWrapping,
                         EditorState.readOnly.of(isDisabled),
@@ -99,6 +95,22 @@ export default function codeEditorEnhancedFormComponent({
                                 if (isLiveOnBlur && this.isDocChanged) {
                                     this.$wire.$commit()
                                 }
+                            },
+                            // Ctrl+Shift+/ pra comentar/descomentar. Não dá pra usar o `keymap.of([{key: 'Ctrl-Shift-/'}])`
+                            // declarativo aqui: o CodeMirror casa pelo caractere PRODUZIDO (event.key), e em teclados
+                            // US/ABNT o Shift+/ produz "?" (não "/"), então esse binding nunca bateria de verdade.
+                            // Checando `event.code` (posição física da tecla) em vez do caractere, funciona independente
+                            // do layout de teclado — e aceita tanto a "/" principal quanto a do teclado numérico.
+                            keydown: (event, view) => {
+                                const isSlashKey = event.code === 'Slash' || event.code === 'NumpadDivide'
+
+                                if (!event.ctrlKey || !event.shiftKey || !isSlashKey) {
+                                    return false
+                                }
+
+                                event.preventDefault()
+
+                                return toggleComment(view)
                             },
                         }),
                         ...(languageExtension ? languageExtension : []),

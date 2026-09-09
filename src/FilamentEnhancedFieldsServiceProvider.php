@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Renalcio\FilamentEnhancedFields;
 
-use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
+use Renalcio\FilamentEnhancedFields\Assets\HashedAlpineComponent;
+use Renalcio\FilamentEnhancedFields\Assets\HashedCss;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -67,8 +67,8 @@ class FilamentEnhancedFieldsServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            AlpineComponent::make('filament-enhanced-code-editor', __DIR__.'/../resources/dist/js/code-editor-enhanced.js'),
-            Css::make('filament-enhanced-fields', __DIR__.'/../resources/dist/css/filament-enhanced-fields.css'),
+            HashedAlpineComponent::make('filament-enhanced-code-editor', __DIR__.'/../resources/dist/js/code-editor-enhanced.js'),
+            HashedCss::make('filament-enhanced-fields', __DIR__.'/../resources/dist/css/filament-enhanced-fields.css'),
             // Js::make('filament-enhanced-fields', __DIR__ . '/../resources/dist/js/filament-enhanced-fields.js'),
         ];
     }

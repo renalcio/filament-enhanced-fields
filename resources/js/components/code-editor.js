@@ -210,8 +210,9 @@ export default function codeEditorEnhancedFormComponent({
             return retorno;
         },
 
-        // Fonte de completion compartilhada entre linguagens: funções/filtros/tags Twig,
-        // classes CSS e símbolos JS do próprio tema (dados vindos do servidor via `completions`).
+        // Fonte de completion compartilhada entre linguagens, a partir de uma lista arbitrária
+        // de sugestões enviada pelo servidor via `completions` (ex.: funções de uma linguagem
+        // customizada, identificadores de outros arquivos do projeto, etc).
         buildCompletionSource() {
             if (!this.completions || !this.completions.length) {
                 return null

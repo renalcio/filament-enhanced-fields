@@ -25,6 +25,8 @@ class CodeEditorEnhanced extends Field
 
     protected CodeLanguage|Closure|array|null $languages = null;
 
+    protected array|Closure|null $completions = null;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -53,6 +55,18 @@ class CodeEditorEnhanced extends Field
         }
 
         return $languages;
+    }
+
+    public function completions(array|Closure|null $completions): static
+    {
+        $this->completions = $completions;
+
+        return $this;
+    }
+
+    public function getCompletions(): array
+    {
+        return $this->evaluate($this->completions) ?? [];
     }
 
     public function CustomStyle(?string $customStyle): static

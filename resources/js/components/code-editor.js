@@ -37,12 +37,14 @@ export default function codeEditorEnhancedFormComponent({
                                                             isLiveOnBlur,
                                                             liveDebounce,
                                                             language,
+                                                            completions,
                                                             state,
                                                         }) {
     return {
         editor: null,
         themeCompartment: new Compartment(),
         isDocChanged: false,
+        completions,
         state,
 
         init() {
@@ -73,6 +75,10 @@ export default function codeEditorEnhancedFormComponent({
                             },
                             {
                                 key: 'Ctrl-/',
+                                run: toggleComment
+                            },
+                            {
+                                key: 'Ctrl-Shift-/',
                                 run: toggleComment
                             }]),
                         EditorView.lineWrapping,
@@ -149,6 +155,8 @@ export default function codeEditorEnhancedFormComponent({
 
             let retorno = null;
 
+            const completionSource = this.buildCompletionSource()
+
             const extensions = {
                 cpp,
                 css,
@@ -164,25 +172,71 @@ export default function codeEditorEnhancedFormComponent({
                 xml,
                 yaml,
                 sass,
-                twig,
             }
 
-            //console.log(language, extensions[language]);
+            const resolveLanguage = (lang) => {
+                if (lang === 'twig') {
+                    return twig(completionSource)
+                }
+
+                return this.attachCompletionSource(extensions[lang]?.(), completionSource)
+            }
 
             //Verificar se a language é um array
             if (Array.isArray(language)) {
-                retorno = language.map((lang) => extensions[lang]?.() || null);
-                //console.log(retorno);
+                retorno = language.map((lang) => resolveLanguage(lang) || null);
             }
 
             //Verificar se extensions tem a language
-            if (typeof language === 'string' && extensions[language]) {
-                retorno = [extensions[language]?.()]
+            if (typeof language === 'string' && (extensions[language] || language === 'twig')) {
+                retorno = [resolveLanguage(language)]
             }
 
-            /*extensions[language]?.() ||*/
-
             return retorno;
+        },
+
+        // Fonte de completion compartilhada entre linguagens: funções/filtros/tags Twig,
+        // classes CSS e símbolos JS do próprio tema (dados vindos do servidor via `completions`).
+        buildCompletionSource() {
+            if (!this.completions || !this.completions.length) {
+                return null
+            }
+
+            const options = this.completions.map((item) => ({
+                label: item.label,
+                type: item.type,
+            }))
+
+            return (context) => {
+                const word = context.matchBefore(/[\w-]+/)
+
+                if (!word || (word.from === word.to && !context.explicit)) {
+                    return null
+                }
+
+                return {
+                    from: word.from,
+                    options,
+                    validFor: /^[\w-]*$/,
+                }
+            }
+        },
+
+        // Anexa a fonte de completion a uma LanguageSupport via `language.data.of(...)` —
+        // mecanismo idiomático do CodeMirror 6 pra ADICIONAR uma fonte sem reconfigurar o
+        // `autocompletion()` global que o `basicSetup` já ativa.
+        attachCompletionSource(support, completionSource) {
+            if (!support || !completionSource) {
+                return support
+            }
+
+            const language = support.language ?? support
+
+            if (!language?.data?.of) {
+                return support
+            }
+
+            return [support, language.data.of({autocomplete: completionSource})]
         },
 
         destroy() {

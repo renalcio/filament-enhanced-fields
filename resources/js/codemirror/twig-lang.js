@@ -29,16 +29,29 @@ const mixedTwigParser = htmlLanguage.parser.configure({
 
 const mixedTwigLanguage = LRLanguage.define({parser: mixedTwigParser})
 
+export function twig(completionSource) {
+    const htmlSupport = html()
+    const jsSupport = javascript()
+    const cssSupport = css()
 
-const twigAutocompletion = twigLanguage.data.of({
-    autocomplete: context => /* Twig completion logic here */ null
-})
-
-export function twig() {
-    return [
+    const extensions = [
         mixedTwigLanguage,
-        html().support,
-        javascript().support,
-        css().support
+        htmlSupport.support,
+        jsSupport.support,
+        cssSupport.support,
     ]
+
+    if (completionSource) {
+        // twigLanguage é o parser usado como overlay dentro de nós de texto do HTML
+        // (ver `wrap: parseMixed` acima), então anexar aqui faz o autocomplete resolver
+        // corretamente a posição do cursor dentro de `{{ }}`/`{% %}`.
+        extensions.push(
+            twigLanguage.data.of({autocomplete: completionSource}),
+            htmlSupport.language.data.of({autocomplete: completionSource}),
+            jsSupport.language.data.of({autocomplete: completionSource}),
+            cssSupport.language.data.of({autocomplete: completionSource}),
+        )
+    }
+
+    return extensions
 }

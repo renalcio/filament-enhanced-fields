@@ -8,6 +8,7 @@
     $liveDebounce = $getLiveDebounce();
     $key = $getKey();
     $language = $getLanguages();
+    $completions = $getCompletions();
     $statePath = $getStatePath();
     $livewireKey = $getLivewireKey();
 @endphp
@@ -31,6 +32,7 @@
                         isLiveOnBlur: @js($isLiveOnBlur),
                         liveDebounce: @js($liveDebounce),
                         language: @js($language),
+                        completions: @js($completions),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     })"
             wire:ignore

@@ -1,8 +1,9 @@
 import {Compartment, EditorState, Prec} from '@codemirror/state'
 import {basicSetup, EditorView} from 'codemirror'
-import {indentWithTab} from '@codemirror/commands'
+import {indentWithTab, toggleComment} from '@codemirror/commands'
 import {oneDark} from '@codemirror/theme-one-dark'
 import {keymap} from '@codemirror/view'
+import {vscodeKeymap} from '@replit/codemirror-vscode-keymap'
 
 import {cpp} from '@codemirror/lang-cpp'
 import {css} from '@codemirror/lang-css'
@@ -25,7 +26,6 @@ import {
     abbreviationTracker,
     enterAbbreviationMode,
     expandAbbreviation,
-    toggleComment,
     wrapWithAbbreviation
 } from '@emmetio/codemirror6-plugin';
 
@@ -63,6 +63,10 @@ export default function codeEditorEnhancedFormComponent({
                         basicSetup,
                         abbreviationTracker(),
                         wrapWithAbbreviation('Ctrl-Shift-A'),
+                        // Atalhos estilo VS Code (mover/duplicar linha, multi-cursor, busca, Mod-/
+                        // pra comentar, Shift-Alt-A pra comentário em bloco, etc.) — mesmas
+                        // funções de @codemirror/commands já usadas no resto do arquivo.
+                        keymap.of(vscodeKeymap),
                         keymap.of([
                             indentWithTab,
                             {
@@ -72,10 +76,6 @@ export default function codeEditorEnhancedFormComponent({
                             {
                                 key: 'Ctrl-Shift-e',
                                 run: enterAbbreviationMode
-                            },
-                            {
-                                key: 'Ctrl-/',
-                                run: toggleComment
                             }]),
                         EditorView.lineWrapping,
                         EditorState.readOnly.of(isDisabled),

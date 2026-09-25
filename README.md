@@ -13,6 +13,7 @@ A small pack of enhanced form fields for [Filament](https://filamentphp.com). Cu
 - **Twig-in-HTML** mixed-language mode, so `.twig`/`.html` templates get proper highlighting both in the markup and inside `{{ }}` / `{% %}` regions, including embedded `<script>`/`<style>` blocks.
 - **Emmet** abbreviation expansion (`Ctrl-E` to expand, `Ctrl-Shift-E` to enter abbreviation mode, `Ctrl-Shift-A` to wrap the selection).
 - **Comment toggling** (`Ctrl-/` and `Ctrl-Shift-/`, both main-row and numpad `/`), matched by physical key position so it works regardless of keyboard layout.
+- **Indentation guides** — vertical markers showing indent levels, with the active block highlighted.
 - **Dark mode** that automatically follows Tailwind's `.dark` class on `<html>` — no extra wiring needed.
 - **Custom autocomplete**: feed the field a list of arbitrary suggestions (functions, symbols, identifiers — from your own app, a database, another file, whatever) and they show up in CodeMirror's completion popup alongside each language's native completions.
 - Supports Filament's standard `hintActions()`, `live()`, and other `Field` conveniences out of the box.

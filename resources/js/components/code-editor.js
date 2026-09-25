@@ -4,6 +4,7 @@ import {indentWithTab, toggleComment} from '@codemirror/commands'
 import {oneDark} from '@codemirror/theme-one-dark'
 import {keymap} from '@codemirror/view'
 import {vscodeKeymap} from '@replit/codemirror-vscode-keymap'
+import {indentationMarkers} from '@replit/codemirror-indentation-markers'
 
 import {cpp} from '@codemirror/lang-cpp'
 import {css} from '@codemirror/lang-css'
@@ -78,6 +79,7 @@ export default function codeEditorEnhancedFormComponent({
                                 run: enterAbbreviationMode
                             }]),
                         EditorView.lineWrapping,
+                        indentationMarkers(),
                         EditorState.readOnly.of(isDisabled),
                         EditorView.editable.of(!isDisabled),
                         EditorView.updateListener.of((viewUpdate) => {

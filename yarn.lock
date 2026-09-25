@@ -605,6 +605,16 @@
     "@emnapi/runtime" "^1.5.0"
     "@tybys/wasm-util" "^0.10.1"
 
+"@replit/codemirror-indentation-markers@^6.5.3":
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/@replit/codemirror-indentation-markers/-/codemirror-indentation-markers-6.5.3.tgz#1cfe5c557c45dd7f2988cbee278f17607010591b"
+  integrity sha512-hL5Sfvw3C1vgg7GolLe/uxX5T3tmgOA3ZzqlMv47zjU1ON51pzNWiVbS22oh6crYhtVhv8b3gdXwoYp++2ilHw==
+
+"@replit/codemirror-vscode-keymap@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@replit/codemirror-vscode-keymap/-/codemirror-vscode-keymap-6.0.2.tgz#cc9b9092db5afb9800fda5a03801b4f6600b427e"
+  integrity sha512-j45qTwGxzpsv82lMD/NreGDORFKSctMDVkGRopaP+OrzSzv+pXDQuU3LnFvKpasyjVT0lf+PKG1v2DSCn/vxxg==
+
 "@ssddanbrown/codemirror-lang-twig@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@ssddanbrown/codemirror-lang-twig/-/codemirror-lang-twig-1.0.0.tgz#691c1c8229f650dda878b81b75b3cf9789fa29ff"

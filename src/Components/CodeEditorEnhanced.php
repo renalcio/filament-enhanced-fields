@@ -27,6 +27,13 @@ class CodeEditorEnhanced extends Field
 
     protected array|Closure|null $completions = null;
 
+    protected bool|Closure $hasShortcuts = false;
+
+    /**
+     * @var array{format: ?string, compress: ?string, expand: ?string}
+     */
+    protected array $shortcutMethods = ['format' => null, 'compress' => null, 'expand' => null];
+
     public function setUp(): void
     {
         parent::setUp();
@@ -67,6 +74,52 @@ class CodeEditorEnhanced extends Field
     public function getCompletions(): array
     {
         return $this->evaluate($this->completions) ?? [];
+    }
+
+    /**
+     * Ativa os atalhos de código do editor (opt-in): Mod-Alt-L formatar, Mod-Alt-M comprimir e Mod-Alt-E
+     * expandir. Cada atalho dispara um evento DOM (`code-editor:format|compress|expand`, com o statePath
+     * em `detail`) e, se configurado via onFormat()/onCompress()/onExpand(), chama o método Livewire.
+     */
+    public function shortcuts(bool|Closure $condition = true): static
+    {
+        $this->hasShortcuts = $condition;
+
+        return $this;
+    }
+
+    public function onFormat(?string $livewireMethod): static
+    {
+        $this->shortcutMethods['format'] = $livewireMethod;
+
+        return $this;
+    }
+
+    public function onCompress(?string $livewireMethod): static
+    {
+        $this->shortcutMethods['compress'] = $livewireMethod;
+
+        return $this;
+    }
+
+    public function onExpand(?string $livewireMethod): static
+    {
+        $this->shortcutMethods['expand'] = $livewireMethod;
+
+        return $this;
+    }
+
+    public function hasShortcuts(): bool
+    {
+        return (bool) $this->evaluate($this->hasShortcuts);
+    }
+
+    /**
+     * @return array{format: ?string, compress: ?string, expand: ?string}
+     */
+    public function getShortcutMethods(): array
+    {
+        return $this->shortcutMethods;
     }
 
     public function CustomStyle(?string $customStyle): static

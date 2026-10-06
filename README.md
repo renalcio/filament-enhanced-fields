@@ -12,7 +12,7 @@ A small pack of enhanced form fields for [Filament](https://filamentphp.com). Cu
 - **Multi-language syntax highlighting**: CSS, Sass/SCSS, HTML, Twig, JavaScript, JSON, PHP, Python, Java, Go, C++, SQL, XML, YAML, Markdown.
 - **Twig-in-HTML** mixed-language mode, so `.twig`/`.html` templates get proper highlighting both in the markup and inside `{{ }}` / `{% %}` regions, including embedded `<script>`/`<style>` blocks.
 - **Emmet** abbreviation expansion (`Ctrl-E` to expand, `Ctrl-Shift-E` to enter abbreviation mode, `Ctrl-Shift-A` to wrap the selection).
-- **Comment toggling** (`Ctrl-/` and `Ctrl-Shift-/`, both main-row and numpad `/`), matched by physical key position so it works regardless of keyboard layout.
+- **Comment toggling** (`Ctrl-/` and `Ctrl-Shift-/`, both main-row and numpad `/`): Twig-style `{# #}` comments in HTML/Twig, and `/* */` in CSS/JS (including `<style>`/`<script>` blocks inside HTML/Twig). Works on ABNT2 and US layouts.
 - **Indentation guides** — vertical markers showing indent levels, with the active block highlighted.
 - **Dark mode** that automatically follows Tailwind's `.dark` class on `<html>` — no extra wiring needed.
 - **Custom autocomplete**: feed the field a list of arbitrary suggestions (functions, symbols, identifiers — from your own app, a database, another file, whatever) and they show up in CodeMirror's completion popup alongside each language's native completions.
@@ -81,10 +81,19 @@ CodeEditorEnhanced::make('content')
 | Shortcut | Action |
 |---|---|
 | `Tab` | Indent |
+| `Ctrl+D` | Duplicate line (or selection), PhpStorm-style |
+| `Ctrl+Shift+K` | Delete line |
+| `Ctrl+Shift+J` | Join lines (current + next, or all lines in the selection) |
+| `Ctrl+Shift+U` | Toggle upper/lower case of the selection (or word under the cursor) |
+| `Alt+J` | Select next occurrence (VS Code's `Ctrl+D`) |
+| `Ctrl+-` / `Ctrl++` | Fold / unfold the block at the cursor (numpad keys included) |
+| `Ctrl+Shift+-` / `Ctrl+Shift++` | Fold all / unfold all (numpad keys included) |
+| `Ctrl+Shift+[` / `Ctrl+Shift+]` | Fold / unfold the block at the cursor (VS Code) |
 | `Ctrl+E` | Expand Emmet abbreviation |
 | `Ctrl+Shift+E` | Enter Emmet abbreviation mode |
 | `Ctrl+Shift+A` | Wrap selection with abbreviation |
-| `Ctrl+/` or `Ctrl+Shift+/` | Toggle line/block comment |
+| `Ctrl+/` | Toggle comment (`//` line comment in JS/PHP; `{# #}` in HTML/Twig; `/* */` in CSS) |
+| `Ctrl+Shift+/` | Toggle block comment on the current line/selection (`{# #}` in HTML/Twig, `/* */` in CSS/JS) |
 
 ## License
 
@@ -112,3 +121,17 @@ Contributions are welcome:
 [link-license]: https://github.com/renalcio/filament-enhanced-fields/blob/main/LICENSE.md
 [link-downloads]: https://packagist.org/packages/renalcio/filament-enhanced-fields
 [link-github-issue]: https://github.com/renalcio/filament-enhanced-fields/issues
+
+## Atalhos de código (opt-in)
+
+```php
+CodeEditorEnhanced::make('content')
+    ->shortcuts()                       // Mod-Alt-L formatar · Mod-Alt-M comprimir · Mod-Alt-E expandir
+    ->onFormat('formatContent')         // opcional: método Livewire chamado com o statePath
+    ->onCompress('compressContent')
+    ->onExpand('expandContent');
+```
+
+Os atalhos só valem com o foco no editor e também disparam os eventos DOM `code-editor:format|compress|expand`
+(`detail.statePath`). O editor sempre emite `code-editor:cursor` (`detail.line`, `detail.column`, `detail.lines`).
+Depois de atualizar o pacote, rode `yarn build:scripts` e `php artisan filament:assets`.

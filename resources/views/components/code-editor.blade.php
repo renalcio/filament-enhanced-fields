@@ -33,6 +33,9 @@
                         liveDebounce: @js($liveDebounce),
                         language: @js($language),
                         completions: @js($completions),
+                        statePath: @js($statePath),
+                        shortcuts: @js($hasShortcuts()),
+                        shortcutMethods: @js($getShortcutMethods()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     })"
             wire:ignore
@@ -40,6 +43,7 @@
                 substr(md5(serialize([
                     $isDisabled,
                     $language,
+                    $hasShortcuts(),
                 ])), 0, 64)
             }}"
             {{ $getExtraAlpineAttributeBag() }}

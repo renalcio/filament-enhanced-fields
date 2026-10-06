@@ -6,6 +6,7 @@ import {twigLanguage} from '@ssddanbrown/codemirror-lang-twig';
 import {parseMixed} from "@lezer/common";
 import {javascript} from "@codemirror/lang-javascript";
 import {css} from "@codemirror/lang-css";
+import {twigCommentTokens} from "./comments.js";
 
 
 const mixedTwigParser = htmlLanguage.parser.configure({
@@ -27,7 +28,10 @@ const mixedTwigParser = htmlLanguage.parser.configure({
     })
 })
 
-const mixedTwigLanguage = LRLanguage.define({parser: mixedTwigParser})
+const mixedTwigLanguage = LRLanguage.define({
+    parser: mixedTwigParser,
+    languageData: {commentTokens: twigCommentTokens},
+})
 
 export function twig(completionSource) {
     const htmlSupport = html()
@@ -39,6 +43,8 @@ export function twig(completionSource) {
         htmlSupport.support,
         jsSupport.support,
         cssSupport.support,
+        twigLanguage.data.of({commentTokens: twigCommentTokens}),
+        htmlSupport.language.data.of({commentTokens: twigCommentTokens}),
     ]
 
     if (completionSource) {

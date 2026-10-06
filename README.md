@@ -12,7 +12,7 @@ A small pack of enhanced form fields for [Filament](https://filamentphp.com). Cu
 - **Multi-language syntax highlighting**: CSS, Sass/SCSS, HTML, Twig, JavaScript, JSON, PHP, Python, Java, Go, C++, SQL, XML, YAML, Markdown.
 - **Twig-in-HTML** mixed-language mode, so `.twig`/`.html` templates get proper highlighting both in the markup and inside `{{ }}` / `{% %}` regions, including embedded `<script>`/`<style>` blocks.
 - **Emmet** abbreviation expansion (`Ctrl-E` to expand, `Ctrl-Shift-E` to enter abbreviation mode, `Ctrl-Shift-A` to wrap the selection).
-- **Comment toggling** (`Ctrl-/` and `Ctrl-Shift-/`, both main-row and numpad `/`), matched by physical key position so it works regardless of keyboard layout.
+- **Comment toggling** (`Ctrl-/` and `Ctrl-Shift-/`, both main-row and numpad `/`): Twig-style `{# #}` comments in HTML/Twig, and `/* */` in CSS/JS (including `<style>`/`<script>` blocks inside HTML/Twig). Works on ABNT2 and US layouts.
 - **Indentation guides** — vertical markers showing indent levels, with the active block highlighted.
 - **Dark mode** that automatically follows Tailwind's `.dark` class on `<html>` — no extra wiring needed.
 - **Custom autocomplete**: feed the field a list of arbitrary suggestions (functions, symbols, identifiers — from your own app, a database, another file, whatever) and they show up in CodeMirror's completion popup alongside each language's native completions.
@@ -84,7 +84,8 @@ CodeEditorEnhanced::make('content')
 | `Ctrl+E` | Expand Emmet abbreviation |
 | `Ctrl+Shift+E` | Enter Emmet abbreviation mode |
 | `Ctrl+Shift+A` | Wrap selection with abbreviation |
-| `Ctrl+/` or `Ctrl+Shift+/` | Toggle line/block comment |
+| `Ctrl+/` | Toggle comment (`//` line comment in JS/PHP; `{# #}` in HTML/Twig; `/* */` in CSS) |
+| `Ctrl+Shift+/` | Toggle block comment on the current line/selection (`{# #}` in HTML/Twig, `/* */` in CSS/JS) |
 
 ## License
 

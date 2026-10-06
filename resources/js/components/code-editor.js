@@ -1,6 +1,6 @@
 import {Compartment, EditorState, Prec} from '@codemirror/state'
 import {basicSetup, EditorView} from 'codemirror'
-import {indentWithTab, toggleComment} from '@codemirror/commands'
+import {indentWithTab} from '@codemirror/commands'
 import {oneDark} from '@codemirror/theme-one-dark'
 import {keymap} from '@codemirror/view'
 import {vscodeKeymap} from '@replit/codemirror-vscode-keymap'
@@ -9,7 +9,7 @@ import {indentationMarkers} from '@replit/codemirror-indentation-markers'
 import {cpp} from '@codemirror/lang-cpp'
 import {css} from '@codemirror/lang-css'
 import {go} from '@codemirror/lang-go'
-import {html} from '@codemirror/lang-html'
+import {html, htmlLanguage} from '@codemirror/lang-html'
 import {java} from '@codemirror/lang-java'
 import {javascript} from '@codemirror/lang-javascript'
 import {json} from '@codemirror/lang-json'
@@ -21,6 +21,7 @@ import {xml} from '@codemirror/lang-xml'
 import {yaml} from '@codemirror/lang-yaml'
 import {sass} from '@codemirror/lang-sass'
 import {twig} from './../codemirror/twig-lang.js'
+import {toggleBlockCommentByLine, twigCommentTokens} from './../codemirror/comments.js'
 
 // Import Expand Abbreviation command
 import {
@@ -99,23 +100,23 @@ export default function codeEditorEnhancedFormComponent({
                                 }
                             },
                         }),
-                        // Ctrl+Shift+/ pra comentar/descomentar. Não dá pra usar o `keymap.of([{key: 'Ctrl-Shift-/'}])`
-                        // declarativo aqui: o CodeMirror casa pelo caractere PRODUZIDO (event.key), e em teclados
-                        // US/ABNT o Shift+/ produz "?" (não "/"), então esse binding nunca bateria de verdade.
-                        // Checando `event.code` (posição física da tecla) em vez do caractere, funciona independente
-                        // do layout de teclado — e aceita tanto a "/" principal quanto a do teclado numérico.
+                        // Ctrl+Shift+/ comenta/descomenta em bloco (`{# #}` em HTML/Twig, `/* */` em CSS/JS).
+                        // Não dá pra usar o `keymap.of([{key: 'Ctrl-Shift-/'}])` declarativo: o CodeMirror casa pelo
+                        // caractere PRODUZIDO e o Shift+/ produz "?". Também não dá pra casar por `event.code`: no
+                        // ABNT2 a tecla "/" é a `IntlRo` e o `Slash` físico é o ";". Por isso casamos "/" ou "?"
+                        // (layouts onde "/" exige Shift) e a "/" do teclado numérico.
                         // `Prec.highest` garante que roda antes de qualquer keymap interno do basicSetup.
                         Prec.highest(EditorView.domEventHandlers({
                             keydown: (event, view) => {
-                                const isSlashKey = event.code === 'Slash' || event.code === 'NumpadDivide'
+                                const isSlashKey = event.key === '/' || event.key === '?' || event.code === 'NumpadDivide'
 
-                                if (!event.ctrlKey || !event.shiftKey || !isSlashKey) {
+                                if (!event.ctrlKey || !event.shiftKey || event.altKey || !isSlashKey) {
                                     return false
                                 }
 
                                 event.preventDefault()
 
-                                return toggleComment(view)
+                                return toggleBlockCommentByLine(view)
                             },
                         })),
                         ...(languageExtension ? languageExtension : []),
@@ -196,7 +197,13 @@ export default function codeEditorEnhancedFormComponent({
                     return twig(completionSource)
                 }
 
-                return this.attachCompletionSource(extensions[lang]?.(), completionSource)
+                const support = this.attachCompletionSource(extensions[lang]?.(), completionSource)
+
+                if (lang === 'html' && support) {
+                    return [support, htmlLanguage.data.of({commentTokens: twigCommentTokens})]
+                }
+
+                return support
             }
 
             //Verificar se a language é um array

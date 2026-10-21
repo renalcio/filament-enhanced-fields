@@ -21,12 +21,9 @@ import {xml} from '@codemirror/lang-xml'
 import {yaml} from '@codemirror/lang-yaml'
 import {sass} from '@codemirror/lang-sass'
 import {twig} from './../codemirror/twig-lang.js'
-<<<<<<< HEAD
 import {duplicateLineOrSelection} from './../codemirror/duplicate.js'
 import {handleFoldShortcut} from './../codemirror/folding.js'
 import {joinLines, toggleCase} from './../codemirror/line-commands.js'
-=======
->>>>>>> e269b7ca1d2f24a46c40cf3e41ce2d6771226a9c
 import {toggleBlockCommentByLine, twigCommentTokens} from './../codemirror/comments.js'
 
 // Import Expand Abbreviation command
